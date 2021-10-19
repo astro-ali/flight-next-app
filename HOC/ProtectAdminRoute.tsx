@@ -13,7 +13,7 @@ const ProtectAdminRoute = ({ children }) => {
     if (token && role === "admin") {
       setIsLoggedIn(true);
     } else {
-      router.push('/login');
+      router.push('/admin/login');
     }
   };
 

@@ -19,10 +19,31 @@ export const ApiAdminLogin = (info: object, callback: any) => {
   fetch(`${URL}/admin/v1/login`, requestOptions)
     .then((response) => response.json())
     .then((result) => {
-        if (result.status) return callback(result, null);
-        else{
-          return callback(null, result.errMsg);
-        }
+      if (result.status) return callback(result, null);
+      else {
+        return callback(null, result.errMsg);
+      }
+    })
+    .catch((error) => console.log("error", error));
+};
+
+export const ApiAdminGetMe = (info: any, callback: any) => {
+  let myHeaders = new Headers();
+  myHeaders.append("token", info);
+
+  let requestOptions: any = {
+    method: "GET",
+    headers: myHeaders,
+    redirect: "follow",
+  };
+
+  fetch(`${URL}/admin/v1/getMe`, requestOptions)
+    .then((response) => response.json())
+    .then((result) => {
+      if(result.status) return callback(result, null);
+      else {
+        return callback(null, result.errMsg);
+      }
     })
     .catch((error) => console.log("error", error));
 };

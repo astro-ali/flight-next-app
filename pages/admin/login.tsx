@@ -23,18 +23,18 @@ const login: React.FC<loginProps> = ({}) => {
           if (!data.username && !data.password) {
             setSubmitting(false);
             return setErrors({
-              username: "Username can not be blank",
-              password: "Password con not be blank",
+              username: "Username is required",
+              password: "Password is required",
             });
           } else if (!data.username) {
             setSubmitting(false);
             return setErrors({
-              username: "Username can not be blank",
+              username: "Username is required",
             });
           } else if (!data.password) {
             setSubmitting(false);
             return setErrors({
-              password: "Password con not be blank",
+              password: "Password is required",
             });
           }
           ApiAdminLogin(data, async (res: any, error: any) => {
@@ -59,7 +59,7 @@ const login: React.FC<loginProps> = ({}) => {
               console.log(res);
               await cookies.set("token", res.token);
               await cookies.set("role", res.role);
-              router.push("/admin/dashboard");
+              router.push("/admin");
             }
           });
         }}
@@ -74,9 +74,10 @@ const login: React.FC<loginProps> = ({}) => {
             <Flex
               direction="column"
               background="white"
-              rounded="15"
+              rounded="12"
               py="8"
               px="8"
+              w={320}
             >
               <form onSubmit={handleSubmit}>
                 <Box mb={6} fontSize="26px" fontWeight="500">
