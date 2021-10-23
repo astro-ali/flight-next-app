@@ -1,5 +1,4 @@
 import React from "react";
-import ProtectAdminRoute from "../../HOC/ProtectAdminRoute";
 import {
   Avatar,
   Flex,
@@ -10,27 +9,42 @@ import {
   ListItem,
   UnorderedList,
   Container,
-  Spinner,
 } from "@chakra-ui/react";
+import {
+  FaHome,
+  FaUserTie,
+  FaUsers,
+  FaPlane,
+  FaPlaneDeparture,
+  FaCity,
+} from "react-icons/fa";
 import { useEffect, useState } from "react";
 import cookies from "js-cookie";
 import { ApiAdminGetMe } from "../../api/admin";
 import { AdminData } from "../../types";
 import AdminNavbar from "../../components/admin/AdminNavbar";
+import Icons from "../../components/public/Icons";
+import ProtectAdminRoute from "../../HOC/ProtectAdminRoute";
+import SidebarRouter from "../../components/admin/SidebarRouter";
+import { useRecoilState } from "recoil";
+import { navState } from "../../atoms";
 
 interface dashboardProps {}
 
 const dashboard: React.FC<dashboardProps> = ({}) => {
   const [adminData, setAdminData] = useState<AdminData>({});
-  const [loading, setLoading] = useState(false);
+  const [currentWindow, setCurrentWindow] = useState<string>("home");
+  const [loading, setLoading] = useState<boolean>(false);
+  const [nav] = useRecoilState(navState);
 
+  // fetching admin data using token
   useEffect(() => {
     let token = cookies.get("token");
     ApiAdminGetMe(token, (res: any, error: any) => {
-      console.log(res);
       if (error) {
         console.log(error);
       } else {
+        console.log(res);
         setAdminData(res?.adminObj);
       }
     });
@@ -73,15 +87,92 @@ const dashboard: React.FC<dashboardProps> = ({}) => {
                 rounded="20px"
               >
                 <Box color="white" className="hello" w="320px">
-                  <UnorderedList ml={0} listStyleType="none" textAlign="center">
-                    <ListItem className="sidebar-item">Home</ListItem>
-                    <ListItem className="sidebar-item ative-item">
+                  <UnorderedList ml={0} listStyleType="none" textAlign="left">
+                    <ListItem
+                      className={
+                        nav == "home"
+                          ? "sidebar-item ative-item"
+                          : "sidebar-item"
+                      }
+                      onClick={() => setCurrentWindow("home")}
+                    >
+                      <Icons
+                        icon={FaHome}
+                        color={nav == "home" ? "white" : ""}
+                      />{" "}
+                      Home
+                    </ListItem>
+                    <ListItem
+                      className={
+                        nav == "admin"
+                          ? "sidebar-item ative-item"
+                          : "sidebar-item"
+                      }
+                      onClick={() => setCurrentWindow("admin")}
+                    >
+                      <Icons
+                        icon={FaUserTie}
+                        color={nav == "admin" ? "white" : ""}
+                      />{" "}
                       Admin Profile
                     </ListItem>
-                    <ListItem className="sidebar-item">Users info</ListItem>
-                    <ListItem className="sidebar-item">Flights</ListItem>
-                    <ListItem className="sidebar-item">Airports</ListItem>
-                    <ListItem className="sidebar-item">Cities</ListItem>
+                    <ListItem
+                      className={
+                        nav == "users"
+                          ? "sidebar-item ative-item"
+                          : "sidebar-item"
+                      }
+                      onClick={() => setCurrentWindow("users")}
+                    >
+                      <Icons
+                        icon={FaUsers}
+                        color={nav == "users" ? "white" : ""}
+                      />{" "}
+                      Users info
+                    </ListItem>
+                    <ListItem
+                      className={
+                        nav == "flights"
+                          ? "sidebar-item ative-item"
+                          : "sidebar-item"
+                      }
+                      onClick={() => setCurrentWindow("flights")}
+                    >
+                      <Icons
+                        icon={FaPlane}
+                        mr="7px"
+                        color={nav == "flights" ? "white" : ""}
+                      />
+                      Flights
+                    </ListItem>
+                    <ListItem
+                      className={
+                        nav == "airports"
+                          ? "sidebar-item ative-item"
+                          : "sidebar-item"
+                      }
+                      onClick={() => setCurrentWindow("airports")}
+                    >
+                      <Icons
+                        icon={FaPlaneDeparture}
+                        color={nav == "airports" ? "white" : ""}
+                      />{" "}
+                      Airports
+                    </ListItem>
+                    <ListItem
+                      className={
+                        nav == "cities"
+                          ? "sidebar-item ative-item"
+                          : "sidebar-item"
+                      }
+                      onClick={() => setCurrentWindow("cities")}
+                    >
+                      <Icons
+                        icon={FaCity}
+                        color={nav == "cities" ? "white" : ""}
+                      />{" "}
+                      Cities
+                    </ListItem>
                   </UnorderedList>
                 </Box>
               </Flex>
@@ -98,10 +189,8 @@ const dashboard: React.FC<dashboardProps> = ({}) => {
             </Container>
           </GridItem>
           <GridItem colSpan={4} rowSpan={2} bg="white">
-            <AdminNavbar name="Home" />
-            {/* <Flex h="90vh" alignItems="center" justifyContent="center">
-              <Spinner color="telegram.500" size="xl" speed="0.65s" />
-            </Flex> */}
+            <AdminNavbar name={currentWindow} />
+            <SidebarRouter current={currentWindow} />
           </GridItem>
         </Grid>
       </ProtectAdminRoute>
