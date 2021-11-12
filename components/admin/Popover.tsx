@@ -5,20 +5,19 @@ import {
   ModalHeader,
   ModalCloseButton,
   ModalBody,
-  ModalFooter,
 } from "@chakra-ui/modal";
-import { Button, useDisclosure } from "@chakra-ui/react";
 import React from "react";
 
 interface PopoverProps {
     handleOpen: any;
     handleClose: any;
+    handleIsOpen: any;
 }
 
-const Popover: React.FC<PopoverProps> = ({ children, handleClose, handleOpen }) => {
-  const { isOpen, onOpen, onClose } = useDisclosure();
+const Popover: React.FC<PopoverProps> = ({ children, handleClose, handleOpen,handleIsOpen }) => {
+
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
+    <Modal isOpen={handleIsOpen} onClose={handleClose}>
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>Modal Title</ModalHeader>
@@ -26,13 +25,6 @@ const Popover: React.FC<PopoverProps> = ({ children, handleClose, handleOpen }) 
         <ModalBody>
           {children}
         </ModalBody>
-
-        <ModalFooter>
-          <Button colorScheme="blue" mr={3} onClick={onClose}>
-            Close
-          </Button>
-          <Button variant="ghost">Secondary Action</Button>
-        </ModalFooter>
       </ModalContent>
     </Modal>
   );

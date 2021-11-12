@@ -88,7 +88,58 @@ export const apiAdminAddCity = (
   fetch(`${URL}/admin/v1/cities`, requestOptions)
     .then((response) => response.json())
     .then((result) => {
-      if(result.status) return callback(result, null);
+      if (result.status) return callback(result, null);
+      return callback(null, result.errMsg);
+    })
+    .catch((error) => console.log("error", error));
+};
+
+export const apiAdminDeleteCity = (
+  token: string,
+  id: number,
+  callback: Function
+) => {
+  let myHeaders = new Headers();
+  myHeaders.append("token", token);
+
+  let requestOptions: object = {
+    method: "DELETE",
+    headers: myHeaders,
+    redirect: "follow",
+  };
+
+  fetch(`${URL}/admin/v1/cities/${id}`, requestOptions)
+    .then((response) => response.json())
+    .then((result) => {
+      if (result.status) return callback(result, null);
+      return callback(null, result.errMsg);
+    })
+    .catch((error) => console.log("error", error));
+};
+
+export const apiAdminEditCity = (
+  token: string,
+  info: object,
+  id: number,
+  callback: Function
+) => {
+  let myHeaders = new Headers();
+  myHeaders.append("token", token);
+  myHeaders.append("Content-Type", "application/json");
+
+  let raw = JSON.stringify(info);
+
+  let requestOptions: object = {
+    method: "PUT",
+    headers: myHeaders,
+    body: raw,
+    redirect: "follow",
+  };
+
+  fetch(`${URL}/admin/v1/cities/${id}`, requestOptions)
+    .then((response) => response.json())
+    .then((result) => {
+      if (result.status) return callback(result, null);
       return callback(null, result.errMsg);
     })
     .catch((error) => console.log("error", error));

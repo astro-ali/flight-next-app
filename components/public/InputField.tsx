@@ -10,7 +10,7 @@ import {
 type InputFieldProps = InputHTMLAttributes<HTMLInputElement> & {
   label: string;
   name: string;
-  error?: string;
+  error?: any;
 };
 
 const InputField: React.FC<InputFieldProps> = ({

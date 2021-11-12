@@ -11,17 +11,29 @@ import {
 } from "@chakra-ui/react";
 import moment from "moment";
 import { AddIcon, EditIcon, DeleteIcon, RepeatIcon } from "@chakra-ui/icons";
-import React, { useState } from "react";
+import React from "react";
+import { useRecoilState } from "recoil";
+import { selected, selectedObject } from "../../atoms";
 
 interface TableProps {
   data: any;
   refresh?: boolean;
   toggleRefresh?: any;
   handleOpenAdd?: any;
+  handleOpenDelete?: any;
+  handleOpenEdit?: any;
 }
 
-const MyTable: React.FC<TableProps> = ({ data, refresh, toggleRefresh,handleOpenAdd }) => {
-  const [selectedRow, setSelectedRow] = useState<number>(null);
+const MyTable: React.FC<TableProps> = ({
+  data,
+  refresh,
+  toggleRefresh,
+  handleOpenAdd,
+  handleOpenDelete,
+  handleOpenEdit,
+}) => {
+  const [selectedRow, setSelectedRow] = useRecoilState<number>(selected);
+  const [selectedObj, setSelectedObj] = useRecoilState(selectedObject);
 
   // data formatting with momentjs
   const format = (date: string) => {
@@ -42,9 +54,25 @@ const MyTable: React.FC<TableProps> = ({ data, refresh, toggleRefresh,handleOpen
     return arr;
   };
 
+  const findobj = (array: Array<any>, id: number) => {
+    let obj: any;
+    array.forEach((element: any) => {
+      if (element["id"] == id) {
+        obj = element;
+      }
+    });
+
+    return obj;
+  };
+
   const select = (id: number) => {
-    if (selectedRow === id) setSelectedRow(null);
-    else setSelectedRow(id);
+    if (selectedRow === id){
+      setSelectedRow(null);
+      setSelectedObj(null);
+    } 
+    else{
+      setSelectedRow(id);
+      setSelectedObj(findobj(data.cities, id));    } 
   };
 
   const tableName = (data: object) => {
@@ -69,7 +97,11 @@ const MyTable: React.FC<TableProps> = ({ data, refresh, toggleRefresh,handleOpen
           {`${tableName(data)} Table`}
         </Box>
         <Box>
-          <Button className="nav-btn" colorScheme="whatsapp" onClick={handleOpenAdd}>
+          <Button
+            className="nav-btn"
+            colorScheme="whatsapp"
+            onClick={handleOpenAdd}
+          >
             <AddIcon mr="5px" /> Add
           </Button>
           <Button
@@ -85,6 +117,7 @@ const MyTable: React.FC<TableProps> = ({ data, refresh, toggleRefresh,handleOpen
             ml="24px"
             colorScheme="orange"
             isDisabled={!selectedRow}
+            onClick={handleOpenEdit}
           >
             <EditIcon mr="7px" /> Edit
           </Button>
@@ -94,6 +127,7 @@ const MyTable: React.FC<TableProps> = ({ data, refresh, toggleRefresh,handleOpen
             mr="5px"
             colorScheme="red"
             isDisabled={!selectedRow}
+            onClick={handleOpenDelete}
           >
             <DeleteIcon mr="7px" /> Delete
           </Button>
@@ -109,8 +143,8 @@ const MyTable: React.FC<TableProps> = ({ data, refresh, toggleRefresh,handleOpen
         <Table>
           <Thead>
             <Tr bg="telegram.400">
-              {Object.keys(data.cities[0]).map((key) => (
-                <Th color="white">{key}</Th>
+              {Object.keys(data.cities[0]).map((key, i) => (
+                <Th key={i} color="white">{key}</Th>
               ))}
             </Tr>
           </Thead>
