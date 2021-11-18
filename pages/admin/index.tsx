@@ -27,15 +27,16 @@ import Icons from "../../components/public/Icons";
 import ProtectAdminRoute from "../../HOC/ProtectAdminRoute";
 import SidebarRouter from "../../components/admin/SidebarRouter";
 import { useRecoilState } from "recoil";
-import { navState } from "../../atoms";
+import { navState, selected, selectedObject } from "../../atoms";
 
 interface dashboardProps {}
 
 const dashboard: React.FC<dashboardProps> = ({}) => {
+  const [nav] = useRecoilState(navState);
   const [adminData, setAdminData] = useState<AdminData>({});
   const [currentWindow, setCurrentWindow] = useState<string>("home");
-  const [loading, setLoading] = useState<boolean>(false);
-  const [nav] = useRecoilState(navState);
+  const [selectedRow, setSelectedRow] = useRecoilState<number>(selected);
+  const [selectedObj, setSelectedObj] = useRecoilState(selectedObject);
 
   // fetching admin data using token
   useEffect(() => {
@@ -44,11 +45,16 @@ const dashboard: React.FC<dashboardProps> = ({}) => {
       if (error) {
         console.log(error);
       } else {
-        console.log(res);
         setAdminData(res?.adminObj);
       }
     });
   }, []);
+
+  const selectCurrentWindow = (window: string) => {
+    setSelectedRow(null);
+    setSelectedObj(null);
+    setCurrentWindow(window);
+  }
 
   return (
     <div>
@@ -94,7 +100,7 @@ const dashboard: React.FC<dashboardProps> = ({}) => {
                           ? "sidebar-item ative-item"
                           : "sidebar-item"
                       }
-                      onClick={() => setCurrentWindow("home")}
+                      onClick={() => selectCurrentWindow("home")}
                     >
                       <Icons
                         icon={FaHome}
@@ -108,7 +114,7 @@ const dashboard: React.FC<dashboardProps> = ({}) => {
                           ? "sidebar-item ative-item"
                           : "sidebar-item"
                       }
-                      onClick={() => setCurrentWindow("admin")}
+                      onClick={() => selectCurrentWindow("admin")}
                     >
                       <Icons
                         icon={FaUserTie}
@@ -122,7 +128,7 @@ const dashboard: React.FC<dashboardProps> = ({}) => {
                           ? "sidebar-item ative-item"
                           : "sidebar-item"
                       }
-                      onClick={() => setCurrentWindow("users")}
+                      onClick={() => selectCurrentWindow("users")}
                     >
                       <Icons
                         icon={FaUsers}
@@ -136,7 +142,7 @@ const dashboard: React.FC<dashboardProps> = ({}) => {
                           ? "sidebar-item ative-item"
                           : "sidebar-item"
                       }
-                      onClick={() => setCurrentWindow("flights")}
+                      onClick={() => selectCurrentWindow("flights")}
                     >
                       <Icons
                         icon={FaPlane}
@@ -151,7 +157,7 @@ const dashboard: React.FC<dashboardProps> = ({}) => {
                           ? "sidebar-item ative-item"
                           : "sidebar-item"
                       }
-                      onClick={() => setCurrentWindow("airports")}
+                      onClick={() => selectCurrentWindow("airports")}
                     >
                       <Icons
                         icon={FaPlaneDeparture}
@@ -165,7 +171,7 @@ const dashboard: React.FC<dashboardProps> = ({}) => {
                           ? "sidebar-item ative-item"
                           : "sidebar-item"
                       }
-                      onClick={() => setCurrentWindow("cities")}
+                      onClick={() => selectCurrentWindow("cities")}
                     >
                       <Icons
                         icon={FaCity}

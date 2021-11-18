@@ -144,3 +144,96 @@ export const apiAdminEditCity = (
     })
     .catch((error) => console.log("error", error));
 };
+
+export const apiGetAllAirports = (token: string, callback: Function) => {
+
+  let myHeaders = new Headers();
+  myHeaders.append("token", token);
+
+  let requestOptions: object = {
+    method: "GET",
+    headers: myHeaders,
+    redirect: "follow",
+  };
+
+  fetch(`${URL}/admin/v1/airports`, requestOptions)
+    .then((response) => response.json())
+    .then((result) => {
+      if(result.status) return callback(result, null);
+      return callback(null, result.errMsg);
+    })
+    .catch((error) => console.log("error", error));
+};
+
+export const apiCreateNewAirport = (token: string, info: any, callback: Function) => {
+  let myHeaders = new Headers();
+  myHeaders.append("token", token);
+  myHeaders.append("Content-Type", "application/json");
+
+  let raw: string = JSON.stringify({
+    name: info.name,
+    code: info.code,
+    city: parseInt(info.city)
+  });
+
+  let requestOptions: object = {
+    method: 'POST',
+    headers: myHeaders,
+    body: raw,
+    redirect: 'follow'
+  };
+
+fetch(`${URL}/admin/v1/airports`, requestOptions)
+  .then(response => response.json())
+  .then(result => {
+    if(result.status) return callback(result, null);
+    return callback(null, result.errMsg);
+  })
+  .catch(error => console.log('error', error));
+}
+
+export const apiEditAirport = (token: string, info: any,id: number, callback: Function) => {
+  let myHeaders = new Headers();
+  myHeaders.append("token", token);
+  myHeaders.append("Content-Type", "application/json");
+
+  let raw: string = JSON.stringify({
+    name: info.name,
+    code: info.code,
+    city: parseInt(info.city),
+  });
+
+  let requestOptions: object = {
+    method: 'PUT',
+    headers: myHeaders,
+    body: raw,
+    redirect: 'follow'
+  };
+
+  fetch(`${URL}/admin/v1/airports/${id}`, requestOptions)
+    .then(response => response.json())
+    .then(result => {
+      if(result.status) return callback(result, null);
+      return callback(null, result.errMsg);
+    })
+    .catch(error => console.log('error', error));
+}
+
+export const apiDeleteAirport = (token: string, id: number, callback: Function) => {
+  let myHeaders = new Headers();
+  myHeaders.append("token", token);
+
+  let requestOptions: object = {
+    method: 'DELETE',
+    headers: myHeaders,
+    redirect: 'follow'
+  };
+
+  fetch(`${URL}/admin/v1/airports/${id}`, requestOptions)
+    .then(response => response.json())
+    .then(result => {
+      if (result.status) return callback(result, null);
+      return callback(null, result.errMsg);
+    })
+    .catch(error => console.log('error', error));
+}

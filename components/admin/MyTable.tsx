@@ -10,21 +10,24 @@ import {
   Button,
 } from "@chakra-ui/react";
 import moment from "moment";
-import { AddIcon, EditIcon, DeleteIcon, RepeatIcon } from "@chakra-ui/icons";
+import { AddIcon, EditIcon, DeleteIcon, RepeatIcon,ViewIcon } from "@chakra-ui/icons";
 import React from "react";
 import { useRecoilState } from "recoil";
 import { selected, selectedObject } from "../../atoms";
 
 interface TableProps {
   data: any;
+  name: string;
   refresh?: boolean;
   toggleRefresh?: any;
   handleOpenAdd?: any;
   handleOpenDelete?: any;
   handleOpenEdit?: any;
+  handleOpenPreview?: any;
 }
 
 const MyTable: React.FC<TableProps> = ({
+  name,
   data,
   refresh,
   toggleRefresh,
@@ -33,7 +36,7 @@ const MyTable: React.FC<TableProps> = ({
   handleOpenEdit,
 }) => {
   const [selectedRow, setSelectedRow] = useRecoilState<number>(selected);
-  const [selectedObj, setSelectedObj] = useRecoilState(selectedObject);
+  const [_, setSelectedObj] = useRecoilState(selectedObject);
 
   // data formatting with momentjs
   const format = (date: string) => {
@@ -66,19 +69,18 @@ const MyTable: React.FC<TableProps> = ({
   };
 
   const select = (id: number) => {
-    if (selectedRow === id){
+    if (selectedRow === id) {
       setSelectedRow(null);
       setSelectedObj(null);
-    } 
-    else{
+    } else {
       setSelectedRow(id);
-      setSelectedObj(findobj(data.cities, id));    } 
+      setSelectedObj(findobj(data[getTheFirstKey(data)], id));
+    }
   };
 
-  const tableName = (data: object) => {
-    let name = Object.keys(data)[0];
-    let newName = name.charAt(0).toUpperCase() + name.slice(1);
-    return newName;
+  const getTheFirstKey = (data: object) => {
+    let key: string = Object.keys(data)[0];
+    return key;
   };
 
   const handleRefresh = () => {
@@ -94,7 +96,7 @@ const MyTable: React.FC<TableProps> = ({
         justifyContent="space-between"
       >
         <Box fontSize="22px" fontWeight="500" ml="10px">
-          {`${tableName(data)} Table`}
+          {`${name} Table`}
         </Box>
         <Box>
           <Button
@@ -111,6 +113,15 @@ const MyTable: React.FC<TableProps> = ({
             onClick={() => handleRefresh()}
           >
             <RepeatIcon mr="5px" /> Refresh
+          </Button>
+          <Button
+            className="nav-btn"
+            ml="24px"
+            colorScheme="purple"
+            isDisabled={!selectedRow}
+            onClick={() => console.log("Preview!")}
+          >
+            <ViewIcon mr="7px" /> Preview
           </Button>
           <Button
             className="nav-btn"
@@ -143,25 +154,35 @@ const MyTable: React.FC<TableProps> = ({
         <Table>
           <Thead>
             <Tr bg="telegram.400">
-              {Object.keys(data.cities[0]).map((key, i) => (
-                <Th key={i} color="white">{key}</Th>
+              {Object.keys(data[getTheFirstKey(data)][0]).map((key, i) => (
+                <Th key={i} color="white">
+                  {key}
+                </Th>
               ))}
             </Tr>
           </Thead>
           <Tbody>
-            {bblSort(data.cities).map((city, i) => (
+            {bblSort(data[getTheFirstKey(data)]).map((item, i) => (
               <Tr
                 key={i}
-                bg={city.id === selectedRow ? "telegram.200" : "white"}
-                onClick={() => select(city.id)}
+                bg={item.id === selectedRow ? "telegram.200" : "white"}
+                onClick={() => select(item.id)}
               >
-                {Object.keys(city).map((key, i) => {
-                  if (key === "airports") {
-                    return <Td key={i}>{city[key].length}</Td>;
+                {Object.keys(item).map((key, i) => {
+                  if (typeof item[key] == "object") {
+                    if (item[key].length) {
+                      return <Td key={i}>{item[key].length}</Td>;
+                    } else {
+                      if (item[key].length === 0) {
+                        return <Td key={i}>{item[key].length}</Td>;
+                      } else {
+                        return <Td key={i}>{item[key]["name"]}</Td>;
+                      }
+                    }
                   } else if (key === "createdAt" || key === "updatedAt") {
-                    return <Td key={i}>{format(city[key])}</Td>;
+                    return <Td key={i}>{format(item[key])}</Td>;
                   } else {
-                    return <Td key={i}>{city[key]}</Td>;
+                    return <Td key={i}>{item[key]}</Td>;
                   }
                 })}
               </Tr>

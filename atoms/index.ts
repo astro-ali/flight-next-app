@@ -13,4 +13,4 @@ export const selected = atom({
 export const selectedObject = atom({
   key: 'selectedObj',
   default: null,  
-})
+});

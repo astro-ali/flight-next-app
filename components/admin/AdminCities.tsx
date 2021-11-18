@@ -13,14 +13,14 @@ import {
   useToast,
   Text,
 } from "@chakra-ui/react";
-import React from "react";
-import { useEffect, useState } from "react";
 import {
   apiAdminAddCity,
   apiAdminDeleteCity,
   apiAdminEditCity,
   apiGetAllCities,
 } from "../../api/admin";
+import React from "react";
+import { useEffect, useState } from "react";
 import MyTable from "./MyTable";
 import { Formik } from "formik";
 import InputField from "../public/InputField";
@@ -31,31 +31,26 @@ import { selected, selectedObject } from "../../atoms";
 
 interface AdminCitiesProps {};
 
-type cityobj = {
-  name: string;
-  code: string;
-}
-
 const AdminCities: React.FC<AdminCitiesProps> = ({}) => {
+  const alertMessage = useToast();
   const [cities, setCities] = useState();
   const [refresh, toggleRefresh] = useState(false);
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [selectedRow, setSelectedRow] = useRecoilState<number>(selected);
-  const [selectedObj, setSelectedObj] = useRecoilState(selectedObject);
   const [operation, chooseOperation] = useState<string>(null);
-  const alertMessage = useToast();
+  const [selectedRow, setSelectedRow] = useRecoilState<number>(selected);
+  const [selectedObj,_] = useRecoilState(selectedObject);
 
   useEffect(() => {
-    console.log(refresh);
-    const token = cookies.get("token");
-    apiGetAllCities(token, (data: any, error: any) => {
-      if (error) {
-        console.log(error);
-      } else {
-        console.log(data);
-        setCities(data);
-      }
-    });
+    setTimeout(() => {
+      const token = cookies.get("token");
+      apiGetAllCities(token, (data: any, error: any) => {
+        if (error) {
+          console.log(error);
+        } else {
+          setCities(data);
+        }
+      });
+    },1000);
   }, [refresh]);
 
   const handleDelete = () => {
@@ -106,29 +101,19 @@ const AdminCities: React.FC<AdminCitiesProps> = ({}) => {
     onOpen();
   };
 
-  const findobj = (array: Array<any>, id: number) => {
-    let obj: cityobj;
-    array.forEach((element: cityobj) => {
-      if (element["id"] == id) {
-        obj = element;
-      }
-    });
-
-    return obj;
-  };
-
   return (
     <Box>
       {cities ? (
         <Box>
           <Flex mt="0px" justifyContent="center" alignItems="center">
             <MyTable
+              name="Cities"
               data={cities}
               refresh={refresh}
-              toggleRefresh={toggleRefresh}
               handleOpenAdd={handleOpenAdd}
               handleOpenDelete={handleOpenDelete}
               handleOpenEdit={handleOpenEdit}
+              toggleRefresh={toggleRefresh}
             />
           </Flex>
           <Modal isOpen={isOpen} onClose={onClose} size="sm">
