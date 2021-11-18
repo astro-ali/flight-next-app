@@ -19,7 +19,6 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import {
-  apiAdminEditCity,
   apiCreateNewAirport,
   apiDeleteAirport,
   apiEditAirport,
@@ -83,12 +82,17 @@ const AdminAirports: React.FC<AdminAirportsProps> = ({}) => {
     onOpen();
   };
 
+  const handleOpenPreview = () => {
+    chooseOperation("preview");
+    onOpen();
+  };
+
   const handleDelete = () => {
     const token = cookies.get("token");
     apiDeleteAirport(token, selectedRow, (data: object, error: any) => {
-      if(error) {
+      if (error) {
         console.log(error);
-        if(error?.err){
+        if (error?.err) {
           onClose();
           alertMessage({
             title: "Failed",
@@ -113,7 +117,7 @@ const AdminAirports: React.FC<AdminAirportsProps> = ({}) => {
         });
         setSelectedRow(null);
       }
-    })
+    });
   };
 
   return (
@@ -129,6 +133,7 @@ const AdminAirports: React.FC<AdminAirportsProps> = ({}) => {
               handleOpenAdd={handleOpenAdd}
               handleOpenEdit={handleOpenEdit}
               handleOpenDelete={handleOpenDelete}
+              handleOpenPreview={handleOpenPreview}
             />
           </Flex>
           <Modal isOpen={isOpen} onClose={onClose} size="sm">
@@ -140,6 +145,7 @@ const AdminAirports: React.FC<AdminAirportsProps> = ({}) => {
                     add: "Create New Airport",
                     edit: "Edit an existing Airport",
                     delete: "Confirm Delete",
+                    preview: "Preview Airport",
                   }[operation]
                 }
               </ModalHeader>
@@ -429,6 +435,33 @@ const AdminAirports: React.FC<AdminAirportsProps> = ({}) => {
                           </Button>
                           <Button variant="solid" onClick={onClose}>
                             No
+                          </Button>
+                        </Box>
+                      </Box>
+                    ),
+                    preview: (
+                      <Box>
+                        {!!selectedObj ? (
+                          <Box fontSize="18px">
+                            <Box>
+                              <Text fontWeight="bold">Airport Name</Text>
+                              <Text>{selectedObj.name}</Text>
+                            </Box>
+                            <Box mt="15px">
+                              <Text fontWeight="bold">Airport Code</Text>
+                              <Text>{selectedObj.code}</Text>
+                            </Box>
+                            <Box mt="15px">
+                              <Text fontWeight="bold">Airport City</Text>
+                              <Text>{selectedObj.city.name}</Text>
+                            </Box>
+                          </Box>
+                        ) : (
+                          ""
+                        )}
+                        <Box mt="20px" mb="10px">
+                          <Button colorScheme="linkedin" onClick={onClose}>
+                            Close
                           </Button>
                         </Box>
                       </Box>

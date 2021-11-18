@@ -34,6 +34,7 @@ const MyTable: React.FC<TableProps> = ({
   handleOpenAdd,
   handleOpenDelete,
   handleOpenEdit,
+  handleOpenPreview
 }) => {
   const [selectedRow, setSelectedRow] = useRecoilState<number>(selected);
   const [_, setSelectedObj] = useRecoilState(selectedObject);
@@ -119,7 +120,7 @@ const MyTable: React.FC<TableProps> = ({
             ml="24px"
             colorScheme="purple"
             isDisabled={!selectedRow}
-            onClick={() => console.log("Preview!")}
+            onClick={handleOpenPreview}
           >
             <ViewIcon mr="7px" /> Preview
           </Button>
